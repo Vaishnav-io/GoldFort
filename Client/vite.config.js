@@ -17,5 +17,6 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    allowedHosts: ['broken-inf-promoting-labor.trycloudflare.com'], // Remove in production
   },
 });

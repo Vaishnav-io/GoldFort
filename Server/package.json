@@ -1,7 +1,7 @@
 {
-    "name": "gemelegance-server",
+    "name": "Gold Fort-server",
     "version": "1.0.0",
-    "description": "Backend API for GemElegance jewelry e-commerce platform",
+    "description": "Backend API for Gold Fort jewelry e-commerce platform",
     "main": "server.js",
     "scripts": {
       "start": "node server.js",

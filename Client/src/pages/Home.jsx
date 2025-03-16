@@ -20,7 +20,7 @@ const Home = () => {
     {
       id: 1,
       name: 'Wedding Collection',
-      image: 'https://images.unsplash.com/photo-1570439694968-2e7c5c288504',
+      image: 'https://images.unsplash.com/photo-1522389903690-657f5318cf1b',
       description: 'Stunning jewelry for your special day',
       link: '/products?category=wedding'
     },
@@ -83,7 +83,7 @@ const Home = () => {
           variants={heroImageVariants}
         >
           <img 
-            src="https://images.unsplash.com/photo-1611085583191-a3b181a88401" 
+            src="https://images.unsplash.com/photo-1611652022419-a9419f74343d" 
             alt="Luxury Jewelry" 
             className="w-full h-full object-cover"
           />

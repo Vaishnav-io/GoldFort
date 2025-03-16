@@ -35,7 +35,7 @@ const Footer = () => {
         >
           {/* Company Info */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-xl font-bold mb-4">GemElegance</h3>
+            <h3 className="text-xl font-bold mb-4">Gold Fort</h3>
             <p className="text-gray-400 mb-4">
               Exquisite jewelry for every occasion. Handcrafted with love and passion.
             </p>
@@ -166,8 +166,8 @@ const Footer = () => {
               </li>
               <li className="flex items-center">
                 <FiMail className="text-gray-400 mr-3" />
-                <a href="mailto:info@gemelegance.com" className="text-gray-400 hover:text-white transition-colors">
-                  info@gemelegance.com
+                <a href="mailto:info@Gold Fort.com" className="text-gray-400 hover:text-white transition-colors">
+                  info@Gold Fort.com
                 </a>
               </li>
             </ul>
@@ -209,7 +209,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
           <p>
-            &copy; {currentYear} GemElegance. All rights reserved.
+            &copy; {currentYear} Gold Fort. All rights reserved.
           </p>
           <div className="mt-2 flex justify-center space-x-4 text-sm">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">

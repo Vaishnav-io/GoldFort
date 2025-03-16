@@ -1,8 +1,8 @@
-# GemElegance - Jewelry E-Commerce Platform
+# Gold Fort - Jewelry E-Commerce Platform
 
-GemElegance is a modern, full-stack e-commerce platform for jewelry shopping, featuring a sleek UI with smooth animations, comprehensive product management, and secure checkout.
+Gold Fort is a modern, full-stack e-commerce platform for jewelry shopping, featuring a sleek UI with smooth animations, comprehensive product management, and secure checkout.
 
-![GemElegance Banner](https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=1200&h=400&fit=crop)
+![Gold Fort Banner](https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=1200&h=400&fit=crop)
 
 ## 🌟 Features
 
@@ -47,8 +47,8 @@ GemElegance is a modern, full-stack e-commerce platform for jewelry shopping, fe
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/vaishnav-io/gemelegance.git
-   cd gemelegance
+   git clone https://github.com/vaishnav-io/Gold Fort.git
+   cd Gold Fort
    ```
 
 2. **Install dependencies**
@@ -87,7 +87,7 @@ Once both servers are running:
 ## ✨ Application Structure
 
 ```
-gemelegance/
+Gold Fort/
 ├── client/                  # Frontend application
 │   ├── public/              # Static files
 │   └── src/                 # React source files

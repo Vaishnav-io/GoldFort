@@ -67,7 +67,7 @@ const AdminSidebar = () => {
           <div className="px-4 py-5 flex items-center justify-between">
             {!isCollapsed && (
               <Link to="/admin" className="text-xl font-bold text-indigo-600">
-                GemElegance
+                Gold Fort
               </Link>
             )}
             <button

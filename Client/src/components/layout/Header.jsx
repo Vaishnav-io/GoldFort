@@ -149,7 +149,7 @@ const Header = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              GemElegance
+              Gold Fort
             </motion.span>
           </Link>
           
