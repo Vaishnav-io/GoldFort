@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHeart, FiShoppingCart, FiStar, FiChevronLeft, FiChevronRight, FiUser, FiCalendar } from 'react-icons/fi';
+import { FiHeart, FiShoppingCart, FiStar, FiChevronLeft, FiChevronRight, FiUser, FiCalendar, FiMinus, FiPlus } from 'react-icons/fi';
 import { getProductById, createProductReview } from '../../features/product/productSlice';
 import { addToCart } from '../../features/cart/cartSlice';
 import { addToWishlist, removeFromWishlist } from '../../features/wishlist/wishlistSlice';

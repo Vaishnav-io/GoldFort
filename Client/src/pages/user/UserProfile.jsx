@@ -18,8 +18,11 @@ const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { user, profile, isLoading, isError, message } = useSelector(state => state.user);
-  const { orders } = useSelector(state => state.order);
+  const { user: authUser } = useSelector(state => state.auth || {});
+const userState = useSelector(state => state.user || { profile: null, isLoading: false, isError: false, message: '' });
+const { profile, isLoading, isError, message } = userState;
+const orderState = useSelector(state => state.order || { orders: [] });
+const { orders } = orderState;
   
   const [activeTab, setActiveTab] = useState('profile');
   const [profileData, setProfileData] = useState({
@@ -43,13 +46,13 @@ const UserProfile = () => {
   });
   
   useEffect(() => {
-    if (!user) {
+    if (!authUser) {
       navigate('/login');
     } else {
       dispatch(getUserProfile());
       dispatch(getMyOrders());
     }
-  }, [user, navigate, dispatch]);
+  }, [authUser, navigate, dispatch]);
   
   useEffect(() => {
     if (profile) {

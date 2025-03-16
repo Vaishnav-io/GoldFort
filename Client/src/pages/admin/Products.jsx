@@ -12,7 +12,9 @@ const Products = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { products, isLoading, isError, message } = useSelector((state) => state.product);
+  const productState = useSelector((state) => state.product);
+const { isLoading, isError, message } = productState;
+const products = Array.isArray(productState.products) ? productState.products : [];
   
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -40,10 +42,12 @@ const Products = () => {
     setSearchTerm(e.target.value);
   };
   
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = searchTerm
+  ? products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : products;
   
   const handleOpenModal = (product = null) => {
     if (product) {

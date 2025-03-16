@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { FiLoader, FiCheckCircle, FiX } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiLoader, FiCheckCircle, FiX, FiAlertCircle } from 'react-icons/fi';
 import { verifyOTP, resendOTP, resetPassword, reset } from '../../features/auth/authSlice';
 import Button from '../../components/comms/Button';
 
@@ -14,12 +14,27 @@ const VerifyOTP = () => {
   const [passwordError, setPasswordError] = useState('');
   const [isPasswordReset, setIsPasswordReset] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
   const inputRefs = useRef([]);
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, isLoading, isSuccess, isError, message } = useSelector(state => state.auth);
+  
+  // Auto-hide toast after 5 seconds
+  useEffect(() => {
+    let toastTimer;
+    if (toast.show) {
+      toastTimer = setTimeout(() => {
+        setToast({ ...toast, show: false });
+      }, 5000);
+    }
+    
+    return () => {
+      clearTimeout(toastTimer);
+    };
+  }, [toast]);
   
   useEffect(() => {
     // If user is already verified, redirect to home page
@@ -36,6 +51,33 @@ const VerifyOTP = () => {
       dispatch(reset());
     };
   }, [user, navigate, dispatch]);
+  
+  // Handle Redux state changes
+  useEffect(() => {
+    if (isError) {
+      setToast({
+        show: true,
+        message: message || 'Verification failed. Please try again.',
+        type: 'error'
+      });
+    }
+    
+    if (isSuccess) {
+      if (isResettingPassword) {
+        setToast({
+          show: true,
+          message: 'Password reset successful!',
+          type: 'success'
+        });
+      } else {
+        setToast({
+          show: true,
+          message: 'Account verified successfully!',
+          type: 'success'
+        });
+      }
+    }
+  }, [isSuccess, isError, message, isResettingPassword]);
   
   useEffect(() => {
     // Focus first input on component mount
@@ -103,11 +145,21 @@ const VerifyOTP = () => {
   const validatePassword = () => {
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters long');
+      setToast({
+        show: true,
+        message: 'Password must be at least 6 characters long',
+        type: 'error'
+      });
       return false;
     }
     
     if (password !== confirmPassword) {
       setPasswordError('Passwords do not match');
+      setToast({
+        show: true,
+        message: 'Passwords do not match',
+        type: 'error'
+      });
       return false;
     }
     
@@ -120,6 +172,11 @@ const VerifyOTP = () => {
     const otpString = otp.join('');
     
     if (otpString.length !== 6) {
+      setToast({
+        show: true,
+        message: 'Please enter a valid 6-digit OTP',
+        type: 'error'
+      });
       return;
     }
     
@@ -148,6 +205,15 @@ const VerifyOTP = () => {
   
   const handleResendOTP = () => {
     dispatch(resendOTP({ email }));
+    setToast({
+      show: true,
+      message: 'OTP has been resent to your email',
+      type: 'info'
+    });
+  };
+  
+  const closeToast = () => {
+    setToast({ ...toast, show: false });
   };
   
   // Animation variants
@@ -163,8 +229,63 @@ const VerifyOTP = () => {
     },
   };
   
+  const toastVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -50,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn",
+      }
+    }
+  };
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Toast notification */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div 
+            className={`fixed top-4 right-4 z-50 max-w-md p-4 rounded-md shadow-lg flex items-start space-x-3 ${
+              toast.type === 'error' ? 'bg-red-100 text-red-800 border-l-4 border-red-500' :
+              toast.type === 'success' ? 'bg-green-100 text-green-800 border-l-4 border-green-500' :
+              toast.type === 'info' ? 'bg-blue-100 text-blue-800 border-l-4 border-blue-500' :
+              'bg-gray-100 text-gray-800 border-l-4 border-gray-500'
+            }`}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={toastVariants}
+          >
+            <div className="flex-shrink-0 pt-0.5">
+              {toast.type === 'error' && <FiAlertCircle className="h-5 w-5 text-red-500" />}
+              {toast.type === 'success' && <FiCheckCircle className="h-5 w-5 text-green-500" />}
+              {toast.type === 'info' && <FiAlertCircle className="h-5 w-5 text-blue-500" />}
+              {toast.type !== 'error' && toast.type !== 'success' && toast.type !== 'info' && 
+                <FiAlertCircle className="h-5 w-5 text-gray-500" />}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{toast.message}</p>
+            </div>
+            <button 
+              className="flex-shrink-0 text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={closeToast}
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <motion.div
         className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md"
         initial="hidden"
@@ -182,16 +303,6 @@ const VerifyOTP = () => {
             }
           </p>
         </div>
-        
-        {isError && (
-          <motion.div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {message}
-          </motion.div>
-        )}
         
         {isSuccess && !isResettingPassword && (
           <motion.div
@@ -332,16 +443,6 @@ const VerifyOTP = () => {
         
         {!isSuccess && isPasswordReset && (
           <form className="mt-8 space-y-6" onSubmit={handleResetPassword}>
-            {passwordError && (
-              <motion.div
-                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {passwordError}
-              </motion.div>
-            )}
-            
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 New Password

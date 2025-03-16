@@ -44,14 +44,17 @@ const Dashboard = () => {
   useEffect(() => {
     if (orders && products && users) {
       // Calculate stats
-      const totalSales = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+      const totalSales = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
       const pendingOrders = orders.filter(order => !order.isDelivered).length;
-      const lowStockProducts = products.filter(product => product.countInStock < 10).length;
+      
+      // Add this check to make sure products is an array before calling filter
+      const lowStockProducts = Array.isArray(products) 
+        ? products.filter(product => product.countInStock < 10).length : 0;
       
       setStats({
         totalSales,
         totalOrders: orders.length,
-        totalProducts: products.length,
+        totalProducts: Array.isArray(products) ? products.length : 0,
         totalUsers: users.length,
         pendingOrders,
         lowStockProducts,
@@ -116,6 +119,17 @@ const Dashboard = () => {
   };
   
   return (
+    <>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-80 lg:hidden">
+        <div className="mx-auto max-w-sm transform rounded-lg bg-gray-800 p-8 text-center shadow-xl transition-all duration-300 hover:scale-105">
+          <h3 className="text-gradient bg-gradient-to-r from-indigo-400 to-purple-600 bg-clip-text text-2xl font-semibold text-transparent">
+            Not Supported!
+          </h3>
+          <p className="mt-4 text-lg text-gray-300">
+            Please use a Desktop device to view the Admin Dashboard.
+          </p>
+        </div>
+      </div>
     <div className="flex h-screen bg-gray-100">
       <AdminSidebar />
       
@@ -309,7 +323,8 @@ const Dashboard = () => {
           </motion.div>
         </main>
       </div>
-    </div>
+      </div>
+      </>
   );
 };
 

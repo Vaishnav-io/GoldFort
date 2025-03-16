@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingCart, FiHeart, FiUser, FiSearch, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
@@ -7,6 +7,9 @@ import { logout } from '../../features/auth/authSlice';
 import { searchProducts } from '../../features/product/productSlice';
 
 const Header = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
@@ -126,7 +129,10 @@ const Header = () => {
       }
     }
   };
-  
+  // Don't render the header on admin routes
+  if (path.startsWith('/admin')) {
+    return null;
+  }
   return (
     <motion.header 
       className={`fixed top-0 left-0 right-0 z-50 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}

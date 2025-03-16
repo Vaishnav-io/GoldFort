@@ -273,7 +273,16 @@ export const productSlice = createSlice({
       .addCase(createProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        // Make sure products is an array before pushing
+        if (!Array.isArray(state.products)) {
+          state.products = [];
+        }
         state.products.push(action.payload);
+        
+        // Make sure filteredProducts is an array before pushing
+        if (!Array.isArray(state.filteredProducts)) {
+          state.filteredProducts = [];
+        }
         state.filteredProducts.push(action.payload);
       })
       .addCase(createProduct.rejected, (state, action) => {

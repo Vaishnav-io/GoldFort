@@ -10,7 +10,7 @@ import ProductFilter from '../../components/product/ProductFilter';
 const ProductList = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { filteredProducts, isLoading, filters } = useSelector(state => state.product);
+  const { filteredProducts = [], products = [], isLoading, filters } = useSelector(state => state.product);
   
   const [view, setView] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,20 +50,23 @@ const ProductList = () => {
   };
   
   // Sort products based on selected option
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortBy) {
-      case 'price-low-high':
-        return a.price - b.price;
-      case 'price-high-low':
-        return b.price - a.price;
-      case 'newest':
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      case 'rating':
-        return b.rating - a.rating;
-      default:
-        return 0;
-    }
-  });
+  // Use a safe check to ensure filteredProducts is an array before sorting
+  const sortedProducts = Array.isArray(filteredProducts) 
+    ? [...filteredProducts].sort((a, b) => {
+        switch (sortBy) {
+          case 'price-low-high':
+            return a.price - b.price;
+          case 'price-high-low':
+            return b.price - a.price;
+          case 'newest':
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          case 'rating':
+            return b.rating - a.rating;
+          default:
+            return 0;
+        }
+      })
+    : [];
   
   // Animation variants
   const containerVariants = {

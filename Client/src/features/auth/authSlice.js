@@ -27,12 +27,16 @@ export const register = createAsyncThunk(
       
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      // Enhanced error handling
+      const message = 
+        (error.response && error.response.data && typeof error.response.data === 'object') 
+          ? error.response.data.message || JSON.stringify(error.response.data)
+          : (error.message || 'Registration failed');
+          
       return thunkAPI.rejectWithValue(message);
     }
   }
 );
-
 // Login user
 export const login = createAsyncThunk(
   'auth/login',
@@ -46,7 +50,12 @@ export const login = createAsyncThunk(
       
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      // Enhanced error handling
+      const message = 
+        (error.response && error.response.data && typeof error.response.data === 'object') 
+          ? error.response.data.message || JSON.stringify(error.response.data)
+          : (error.message || 'Login failed');
+          
       return thunkAPI.rejectWithValue(message);
     }
   }

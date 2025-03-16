@@ -1,24 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { FiMail, FiLoader, FiCheckCircle } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiMail, FiLoader, FiCheckCircle, FiAlertCircle, FiX } from 'react-icons/fi';
 import { forgotPassword, reset } from '../../features/auth/authSlice';
 import Button from '../../components/comms/Button';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoading, isSuccess, isError, message } = useSelector(state => state.auth);
   
+  // Auto-hide toast after 5 seconds
   useEffect(() => {
+    let toastTimer;
+    if (toast.show) {
+      toastTimer = setTimeout(() => {
+        setToast({ ...toast, show: false });
+      }, 5000);
+    }
+    
+    return () => {
+      clearTimeout(toastTimer);
+    };
+  }, [toast]);
+  
+  // Handle Redux state changes
+  useEffect(() => {
+    if (isError) {
+      setToast({
+        show: true,
+        message: message || 'Failed to send reset instructions. Please try again.',
+        type: 'error'
+      });
+    }
+    
+    if (isSuccess && submitted) {
+      setToast({
+        show: true,
+        message: `Reset instructions sent to ${email}`,
+        type: 'success'
+      });
+    }
+    
     return () => {
       dispatch(reset());
     };
-  }, [dispatch]);
+  }, [isSuccess, isError, message, email, submitted, dispatch]);
   
   const handleChange = (e) => {
     setEmail(e.target.value);
@@ -28,6 +60,10 @@ const ForgotPassword = () => {
     e.preventDefault();
     dispatch(forgotPassword(email));
     setSubmitted(true);
+  };
+  
+  const closeToast = () => {
+    setToast({ ...toast, show: false });
   };
   
   // Animation variants
@@ -43,8 +79,60 @@ const ForgotPassword = () => {
     },
   };
   
+  const toastVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -50,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn",
+      }
+    }
+  };
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Toast notification */}
+      <AnimatePresence>
+        {toast.show && (
+          <motion.div 
+            className={`fixed top-4 right-4 z-50 max-w-md p-4 rounded-md shadow-lg flex items-start space-x-3 ${
+              toast.type === 'error' ? 'bg-red-100 text-red-800 border-l-4 border-red-500' :
+              toast.type === 'success' ? 'bg-green-100 text-green-800 border-l-4 border-green-500' :
+              'bg-blue-100 text-blue-800 border-l-4 border-blue-500'
+            }`}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={toastVariants}
+          >
+            <div className="flex-shrink-0 pt-0.5">
+              {toast.type === 'error' && <FiAlertCircle className="h-5 w-5 text-red-500" />}
+              {toast.type === 'success' && <FiCheckCircle className="h-5 w-5 text-green-500" />}
+              {toast.type !== 'error' && toast.type !== 'success' && <FiAlertCircle className="h-5 w-5 text-blue-500" />}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{toast.message}</p>
+            </div>
+            <button 
+              className="flex-shrink-0 text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={closeToast}
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <motion.div
         className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md"
         initial="hidden"
@@ -59,16 +147,6 @@ const ForgotPassword = () => {
             Enter your email address and we'll send you an OTP to reset your password.
           </p>
         </div>
-        
-        {isError && (
-          <motion.div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {message}
-          </motion.div>
-        )}
         
         {isSuccess && submitted ? (
           <motion.div

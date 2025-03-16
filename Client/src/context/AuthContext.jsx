@@ -1,5 +1,7 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Create context
 const AuthContext = createContext();
@@ -8,17 +10,25 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
-    // Initialize authentication state
+    // Check if user exists but is not verified
+    if (user && !user.isVerified && location.pathname !== '/verify-otp') {
+      // Redirect to verification page
+      navigate('/verify-otp');
+    }
+    
     setLoading(false);
-  }, [user]);
+  }, [user, navigate, location]);
   
   // Context value to be provided
   const contextValue = {
     user,
     isAuthenticated: !!user,
     isAdmin: user?.isAdmin || false,
+    isVerified: user?.isVerified || false,
     loading,
   };
   

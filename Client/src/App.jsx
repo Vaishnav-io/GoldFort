@@ -27,12 +27,13 @@ import NotFound from './pages/NotFound';
 
 // Auth Provider
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/comms/ProtectedRoute';
 
 function App() {
   return (
     <Provider store={store}>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-grow">
@@ -42,22 +43,27 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/products" element={<ProductList />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/verify-otp" element={<VerifyOTP />} />
                   
                   {/* Protected User Routes */}
-                  <Route path="/profile" element={<UserProfile />} />
-                  <Route path="/checkout" element={<Checkout />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/profile" element={<UserProfile />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                  </Route>
                   
                   {/* Protected Admin Routes */}
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/products" element={<AdminProducts />} />
-                  <Route path="/admin/orders" element={<AdminOrders />} />
-                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route element={<ProtectedRoute requireAdmin={true} />}>
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/settingsx" element={<AdminDashboard />} />
+                    <Route path="/admin/products" element={<AdminProducts />} />
+                    <Route path="/admin/orders" element={<AdminOrders />} />
+                    <Route path="/admin/users" element={<AdminUsers />} />
+                  </Route>
                   
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
@@ -66,8 +72,8 @@ function App() {
             </main>
             <Footer />
           </div>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </Provider>
   );
 }

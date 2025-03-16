@@ -1,3 +1,4 @@
+// server/controllers/authController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -67,13 +68,25 @@ const registerUser = asyncHandler(async (req, res) => {
         isVerified: user.isVerified,
         token: generateToken(user._id),
         message: 'Registration successful. Please check your email for verification OTP.',
+        requiresVerification: true
       });
     } catch (error) {
       user.otp = undefined;
       await user.save();
       
-      res.status(500);
-      throw new Error('Email could not be sent');
+      // Send response with error but include user details
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      isVerified: user.isVerified,
+      token: generateToken(user._id),
+      message: 'Registration successful, but verification email could not be sent. Please request a new verification code.',
+      requiresVerification: true,
+      emailError: true
+    });
+      
     }
   } else {
     res.status(400);
